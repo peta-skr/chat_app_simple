@@ -4,11 +4,18 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function Home() {
-  const [message, setMessage] = useState("");
+  const [name, setName] = useState("");
+
+  const login = async () => {};
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <button>click</button>
+    <div className="">
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <button onClick={() => login()}>login</button>
     </div>
   );
 }

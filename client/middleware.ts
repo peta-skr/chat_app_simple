@@ -1,14 +1,23 @@
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import type { NextRequest } from "next/server";
 
-export const middleware = () => {
+export const middleware = (request: NextRequest) => {
   const cokkieStore = cookies();
   const user = cokkieStore.get("user")?.value;
-  if (user) {
-    return Response.redirect(new URL("/", "http://localhost:3000"));
+  const url = request.nextUrl;
+
+  // 後で、クッキーに正しい情報が格納されているのかを検証する
+
+  // ログインしていないときに、ログインが必要なページを訪れた際
+  if (!user && url.pathname != "/login") {
+    return Response.redirect(new URL("/login", "http://localhost:3000"));
   }
 
-  return false;
+  // ログインしているときに、ログインページを訪れた際
+  if (user && url.pathname == "/login") {
+    return Response.redirect(new URL("/", "http://localhost:3000"));
+  }
 };
 
 export const config = {
