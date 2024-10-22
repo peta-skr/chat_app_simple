@@ -1,8 +1,10 @@
 import { Prisma } from "@prisma/client";
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
+require("dotenv").config();
 
 const app = express();
 const server = createServer(app);
@@ -11,10 +13,32 @@ const io = new Server(server, {
 });
 const prisma = new PrismaClient();
 
+const SECRET_KEY = process.env.SECRET_KEY || "secret";
+
+// corsの設定
+const allowCorssDomain = function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:4000");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+};
+
+app.use(express.json());
+
 app.get("/", (req, res) => {
   const result = getChatLists();
 
   res.send(result);
+});
+
+app.post("/login", (req, res) => {
+  console.log(req.body.name);
+
+  const token = jwt.sign({ name: req.body.name }, SECRET_KEY);
+  console.log(token);
+  res.send(token);
 });
 
 // チャットを送信
