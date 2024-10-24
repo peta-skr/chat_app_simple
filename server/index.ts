@@ -53,8 +53,22 @@ app.post("/login", (req, res) => {
 });
 
 // チャットを送信
-app.post("message", (req, res) => {
+app.post("/message", (req, res) => {
   // addMessage();
+});
+
+app.post("/user", (req, res) => {
+  const token = req.body.token;
+
+  const userName = jwt.verify(
+    token,
+    SECRET_KEY,
+    function (err: any, decoded: any) {
+      return decoded;
+    }
+  );
+
+  res.send(userName);
 });
 
 io.on("connection", (socket) => {
@@ -64,8 +78,9 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 
-  socket.on("chat message", (msg) => {
-    io.emit("chat message", msg);
+  socket.on("message", (msg) => {
+    // io.emit("chat message", msg);
+    console.log(msg);
   });
 });
 
