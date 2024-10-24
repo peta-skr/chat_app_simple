@@ -78,9 +78,15 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 
-  socket.on("message", (msg) => {
-    // io.emit("chat message", msg);
+  socket.on("message", async (msg: string[2]) => {
     console.log(msg);
+    const chat = await prisma.chat.create({
+      data: {
+        name: msg[1],
+        contenxt: msg[0],
+      },
+    });
+    io.emit("message", chat);
   });
 });
 
